@@ -4,9 +4,16 @@ using UnityEngine;
 using UnityEngine.Animations;
 
 public class PlayerController : MonoBehaviour
-{ 
-    // This is very unfinished atm sorry :(  -Wyatt
+{
+    [SerializeField] KeyCode MoveLeftKey = KeyCode.A;
+    [SerializeField] KeyCode MoveRightKey = KeyCode.D;
+    [SerializeField] KeyCode JumpKey = KeyCode.Space;
+    [SerializeField] float MoveForce = 15.0f;
+    [SerializeField] float MaxVelocity = 6.0f;
+    [SerializeField] float DampingCoefficient = 0.97f;
+
     Rigidbody2D rigidBody;
+
 
     private void Awake()
     {
@@ -24,10 +31,32 @@ public class PlayerController : MonoBehaviour
         Vector2 movementValues = Vector2.zero;
 
         // convert the user's input to movement values
-        movementValues.x = Input.GetAxis("Horizontal");
+        if (Input.GetKey( MoveLeftKey ) ) 
+        {
+            movementValues += Vector2.left;
+        }
+        else if (Input.GetKey( MoveRightKey ) ) 
+        {
+            movementValues += Vector2.right;
+        }
 
-        //movementValues.Normalize();
-        rigidBody.velocity = movementValues;
+        movementValues.Normalize();
+        rigidBody.AddForce( movementValues * MoveForce);
+
+        rigidBody.AddForce(movementValues * MoveForce);
+        // Clamp the maximum velocity to our defined cap.
+        if (rigidBody.velocity.magnitude > MaxVelocity)
+        {
+            // Maintain the current direction by using the normalized velocity vector
+            rigidBody.velocity = rigidBody.velocity.normalized * MaxVelocity;
+        }
+        // We know the player let go of the controls if the input vector is nearly zero.
+        if (movementValues.sqrMagnitude <= 0.1f)
+        {
+            // Quickly damp the movement when we let go of the inputs by multiplying the vector
+            // by a value less than one each frame.
+            rigidBody.velocity *= DampingCoefficient;
+        }
 
     }
 
