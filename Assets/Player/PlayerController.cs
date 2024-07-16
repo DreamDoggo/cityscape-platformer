@@ -12,13 +12,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float MaxVelocity = 6.0f;
     [SerializeField] float DampingCoefficient = 0.97f;
     [SerializeField] float GroundedGraceDistance;
-    [SerializeField] float JumpVelocity = 6.0f;
+    [SerializeField] float JumpVelocity = 12.0f;
     [SerializeField] Transform GroundCheck;
 
     Rigidbody2D RefRigidBody;
     BoxCollider2D RefCollider;
 
-    bool CanJump;
+    bool Grounded;
 
 
     private void Awake()
@@ -79,27 +79,26 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 rayOrigin = GroundCheck.position;
         Vector2 rayDirection = Vector2.down;
-        float rayDistance = .0001f;
+        float rayDistance = .001f;
 
         RaycastHit2D rayHit = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
         Debug.DrawRay(rayOrigin, rayDirection, Color.magenta);
         if (rayHit) 
         {
-            if (CanJump == false) { Debug.Log("Jump refreshed"); }
-            CanJump = true;
             
             if (RefRigidBody.velocity.y <= 0) 
             {
-                
+                if (Grounded == false) { Debug.Log("Jump refreshed"); }
+                Grounded = true;
             }
         }
 
-        if (Input.GetKeyDown(JumpKey) && CanJump) 
+        if (Input.GetKey(JumpKey) && Grounded) 
         {
             Vector2 velocity = RefRigidBody.velocity;
             velocity.y = JumpVelocity;
             RefRigidBody.velocity = velocity;
-            CanJump = false;
+            Grounded = false;
             Debug.Log("Jump used");
         }
 
