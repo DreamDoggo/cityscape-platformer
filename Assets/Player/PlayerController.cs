@@ -20,18 +20,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float DampingCoefficient = 0.97f;
 
     [Tooltip("How close to the ground is the player considered grounded (don't make too small)")]
-    [SerializeField] float GroundedGraceDistance = .1f;
+    [SerializeField] float GroundedGraceDistance = .005f;
 
     [Tooltip("How powerful the player's jump is")]
     [SerializeField] float JumpVelocity = 12.0f;
 
-    [Tooltip("NOT IMPLEMENTED YET" +
-        "\nHow much to dampen the player's jump when they don't hold the jump button for long enough." +
-        "\n Use values between 0 and 1, smaller values produce greater results")]
-    [SerializeField] float GravityForce = 0.5f;
+    [Tooltip("How much to dampen the player's jump when they don't hold the jump button for long enough." +
+        "\nUse values between 0 and 1, smaller values produce greater results")]
+    [SerializeField] float JumpDampingCoefficient = 0.5f;
 
     [Tooltip("Where on the player do they check to see if they are grounded")]
     [SerializeField] Transform GroundCheck;
+
+    [Tooltip("What number layer is the ground on?")]
+    [SerializeField] int GroundLayer;
 
     Rigidbody2D RefRigidBody;
     BoxCollider2D RefCollider;
@@ -56,6 +58,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        DampenJump();
+    }
     private void FixedUpdate()
     {
         UpdateMovement();
@@ -102,7 +108,7 @@ public class PlayerController : MonoBehaviour
     {
         UpdateGrounded();
         Jump();
-        DampenJump();
+        //DampenJump();
     }
 
     private void UpdateGrounded() 
@@ -112,7 +118,7 @@ public class PlayerController : MonoBehaviour
         Vector2 rayDirection = Vector2.down;
 
         // If the player is close enough to the ground, give them the ability to jump. Otherwise, take it away.
-        RaycastHit2D rayHit = Physics2D.Raycast(rayOrigin, rayDirection, GroundedGraceDistance, 7);
+        RaycastHit2D rayHit = Physics2D.Raycast(rayOrigin, rayDirection, GroundedGraceDistance, GroundLayer);
         Debug.DrawRay(rayOrigin, rayDirection * rayHit.distance, Color.magenta);
         if (rayHit)
         {
@@ -140,9 +146,9 @@ public class PlayerController : MonoBehaviour
 
     private void DampenJump() 
     {
-        if (Input.GetKeyUp(JumpKey) && IsJumping)
+        if (Input.GetKeyUp(JumpKey) && IsJumping && RefRigidBody.velocity.y > 0)
         {
-            RefRigidBody.velocity = new Vector2(RefRigidBody.velocity.x, RefRigidBody.velocity.y * GravityForce);
+            RefRigidBody.velocity = new Vector2(RefRigidBody.velocity.x, RefRigidBody.velocity.y * JumpDampingCoefficient);
         }
     }
 

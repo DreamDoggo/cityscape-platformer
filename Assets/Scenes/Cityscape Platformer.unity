@@ -2696,8 +2696,9 @@ MonoBehaviour:
   DampingCoefficient: 0.97
   GroundedGraceDistance: 0.1
   JumpVelocity: 12
-  GravityForce: 0.2
+  JumpDampingCoefficient: 0.3
   GroundCheck: {fileID: 811103839}
+  GroundLayer: 7
 --- !u!50 &1559078262
 Rigidbody2D:
   serializedVersion: 4
