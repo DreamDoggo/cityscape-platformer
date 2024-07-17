@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Animations;
+using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] KeyCode MoveLeftKey = KeyCode.A;
     [SerializeField] KeyCode MoveRightKey = KeyCode.D;
     [SerializeField] KeyCode JumpKey = KeyCode.Space;
+    [SerializeField] KeyCode SlideKey = KeyCode.S;
 
     [Tooltip("The amount of horizontal force applied to the player when they move")]
     [SerializeField] float MoveForce = 15.0f;
@@ -25,9 +27,17 @@ public class PlayerController : MonoBehaviour
     [Tooltip("How powerful the player's jump is")]
     [SerializeField] float JumpVelocity = 12.0f;
 
-    [Tooltip("How much to dampen the player's jump when they don't hold the jump button for long enough." +
+    [Tooltip("How much to dampen the player's jump when they don't hold the jump button for long enough" +
         "\nUse values between 0 and 1, smaller values produce greater results")]
     [SerializeField] float JumpDampingCoefficient = 0.5f;
+
+    [Tooltip("How far sliding sends the player in the direction they're facing horizontally")]
+    [SerializeField] float SlideForce = 45f;
+
+    [Tooltip("How much smaller to make the player's hitbox when sliding")]
+    [SerializeField] float SlideSquish = .5f;
+
+    [SerializeField] float SlideDuration = 1.0f;
 
     [Tooltip("Where on the player do they check to see if they are grounded")]
     [SerializeField] Transform GroundCheck;
@@ -37,9 +47,12 @@ public class PlayerController : MonoBehaviour
 
     Rigidbody2D RefRigidBody;
     BoxCollider2D RefCollider;
+    SpriteRenderer RefSprite;
 
     private bool IsGrounded;
     private bool IsJumping;
+    private bool IsSliding;
+    private bool IsFacingLeft;
 
 
 
@@ -56,6 +69,12 @@ public class PlayerController : MonoBehaviour
         {
             Debug.LogError("A BoxColider component was not found on the player");
         }
+
+        RefSprite = GetComponent<SpriteRenderer>();
+        if (RefSprite == null) 
+        {
+            Debug.LogError("The player doesn't have a Sprite!");
+        }
     }
 
     private void Update()
@@ -66,6 +85,7 @@ public class PlayerController : MonoBehaviour
     {
         UpdateMovement();
         UpdateJump();
+        //UpdateSlide();
     }
 
     private void UpdateMovement() 
@@ -78,10 +98,14 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(MoveLeftKey))
         {
             movementValues += Vector2.left;
+            IsFacingLeft = true;
+            Debug.Log(IsFacingLeft);
         }
         else if (Input.GetKey(MoveRightKey))
         {
             movementValues += Vector2.right;
+            IsFacingLeft = false;
+            Debug.Log(IsFacingLeft);
         }
 
         movementValues.Normalize();
@@ -102,13 +126,12 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Performs all operations related to the player jumping
+    /// Performs most operations related to the player jumping
     /// </summary>
     private void UpdateJump() 
     {
         UpdateGrounded();
         Jump();
-        //DampenJump();
     }
 
     private void UpdateGrounded() 
@@ -152,9 +175,61 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /*private void UpdateSlide() 
+    {
+        if (Input.GetKeyDown(SlideKey) && IsGrounded && !IsSliding)
+        {
+            
+            //RefRigidBody.constraints = RigidbodyConstraints2D.FreezePositionY;
+            
+            //RefRigidBody.constraints = RigidbodyConstraints2D.FreezePositionY;
+
+            if (IsFacingLeft) 
+            {
+                //RefRigidBody.velocity += new Vector2(Vector2.left.x * SlideForce, 0);
+                StartCoroutine(PerformSlide(Vector2.left.x));
+                
+            }
+            else 
+            {
+                //RefRigidBody.velocity += new Vector2(Vector2.right.x * SlideForce, 0);
+                StartCoroutine (PerformSlide(Vector2.right.x));
+            }   
+        }
+    }
+
+    private IEnumerator PerformSlide(float direction) 
+    {
+        IsSliding = true;
+        RefCollider.size = new Vector2(RefCollider.size.x, RefCollider.size.y * SlideSquish);
+        RefCollider.offset = new Vector2(0, 0 - SlideSquish / 2);
+
+        // calculate how long the slide should last
+        float slideLength = Time.time + SlideDuration;
+        float slideStartTime = Time.time;
+
+        while (Time.time - slideStartTime < slideLength) 
+        {
+            RefRigidBody.AddForce(new Vector2(direction * SlideForce * Time.deltaTime, 0));
+        }
+
+        ResetColliderSize();
+        IsSliding = false;
+        yield return null;
+
+    }
+
+    private void ResetColliderSize() 
+    {
+        RefCollider.size = new Vector2(RefCollider.size.x, RefCollider.size.y / SlideSquish);
+        RefCollider.offset = Vector2.zero;
+    } */
+
 
     /* TODO:
      * - Wall jump
+     * - Slide
+     * - Reset jump on all objects
      */
 
 
