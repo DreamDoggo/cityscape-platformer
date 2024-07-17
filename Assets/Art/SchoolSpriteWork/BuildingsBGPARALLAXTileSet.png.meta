@@ -34,7 +34,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -45,10 +45,10 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -71,7 +71,7 @@ TextureImporter:
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 4
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
@@ -113,19 +113,124 @@ TextureImporter:
       name: BuildingsBGPARALLAXTileSet_0
       rect:
         serializedVersion: 2
-        x: 4
-        y: 0
-        width: 380
-        height: 218
+        x: 76
+        y: 7
+        width: 74
+        height: 207
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 7, z: 2, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
       spriteID: cef2d0ddd8a45644ca185455239d09ac
       internalID: 393329135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BuildingsBGPARALLAXTileSet_1
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 38
+        width: 101
+        height: 171
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a08e3eba924003b4f85293ea861805c6
+      internalID: 767039560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BuildingsBGPARALLAXTileSet_2
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 36
+        width: 43
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5f9c18b1028a044fad926669b33eed5
+      internalID: -2013450211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BuildingsBGPARALLAXTileSet_3
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 174
+        width: 79
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ccb692297487ee741b22ba58852de325
+      internalID: -654027058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BuildingsBGPARALLAXTileSet_4
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 10
+        width: 72
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8efb1e29661e4741a78122040181538
+      internalID: -1362548076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BuildingsBGPARALLAXTileSet_5
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 25
+        width: 79
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 487ea51406c1b7c4584c11ed3c0bfed3
+      internalID: -1010050290
       vertices: []
       indices: 
       edges: []
@@ -142,6 +247,11 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       BuildingsBGPARALLAXTileSet_0: 393329135
+      BuildingsBGPARALLAXTileSet_1: 767039560
+      BuildingsBGPARALLAXTileSet_2: -2013450211
+      BuildingsBGPARALLAXTileSet_3: -654027058
+      BuildingsBGPARALLAXTileSet_4: -1362548076
+      BuildingsBGPARALLAXTileSet_5: -1010050290
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
