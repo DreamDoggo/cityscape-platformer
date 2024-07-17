@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 37f67ceeaea838142b80a3ba1628ca2c
+guid: 9bf4ca5f90175af4595152d8a3d2e157
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: BuildingsMIDGROUNDPARALLAXTileSet_0
+      name: BuildingsFOREGROUNDPARALLAXTileSet_0
       rect:
         serializedVersion: 2
-        x: 19
-        y: 170
-        width: 77
-        height: 24
+        x: 48
+        y: 106
+        width: 49
+        height: 66
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -111,83 +111,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e9f91712ddde16345a46c78939f35f38
-      internalID: -2059626911
+      spriteID: bd48b4195fa81204c93b6fd272a4f80e
+      internalID: -1654184511
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: BuildingsMIDGROUNDPARALLAXTileSet_1
+      name: BuildingsFOREGROUNDPARALLAXTileSet_1
       rect:
         serializedVersion: 2
         x: 112
-        y: 167
-        width: 64
-        height: 28
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: aa4cdb44deb026c42aacd579eb5290db
-      internalID: -906873197
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: BuildingsMIDGROUNDPARALLAXTileSet_2
-      rect:
-        serializedVersion: 2
-        x: 235
-        y: 0
-        width: 89
-        height: 180
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bfa241b840b8c6b4294b72bec883b6e8
-      internalID: 1416596997
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: BuildingsMIDGROUNDPARALLAXTileSet_3
-      rect:
-        serializedVersion: 2
-        x: 2
-        y: 0
-        width: 114
-        height: 152
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 83eb337a31125e94c838bd54f7d09e58
-      internalID: 1289427608
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: BuildingsMIDGROUNDPARALLAXTileSet_4
-      rect:
-        serializedVersion: 2
-        x: 120
-        y: 0
+        y: 138
         width: 112
-        height: 157
+        height: 20
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -195,8 +132,113 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6009940b0b99e484e94a21479794c0b6
-      internalID: 1239353953
+      spriteID: da5a4dd7cbe56a34ea3252611f5460c7
+      internalID: 1559680418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BuildingsFOREGROUNDPARALLAXTileSet_2
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 126
+        width: 72
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 283d039ff54575544835820e4e8e7f17
+      internalID: -133751515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BuildingsFOREGROUNDPARALLAXTileSet_3
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 0
+        width: 79
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21830304608b3e349b82255713ba3fa7
+      internalID: 1449804848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BuildingsFOREGROUNDPARALLAXTileSet_4
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 0
+        width: 73
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7feb610cb95008a43a267109528baaa2
+      internalID: 1437846002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BuildingsFOREGROUNDPARALLAXTileSet_5
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 0
+        width: 47
+        height: 117
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2babfc1c2cea85747ac49f3d9a390123
+      internalID: 40580202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BuildingsFOREGROUNDPARALLAXTileSet_6
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 0
+        width: 78
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ba3cb5fc48429d4ab8f62b11ecaef42
+      internalID: 637694338
       vertices: []
       indices: 
       edges: []
@@ -212,11 +254,13 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      BuildingsMIDGROUNDPARALLAXTileSet_0: -2059626911
-      BuildingsMIDGROUNDPARALLAXTileSet_1: -906873197
-      BuildingsMIDGROUNDPARALLAXTileSet_2: 1416596997
-      BuildingsMIDGROUNDPARALLAXTileSet_3: 1289427608
-      BuildingsMIDGROUNDPARALLAXTileSet_4: 1239353953
+      BuildingsFOREGROUNDPARALLAXTileSet_0: -1654184511
+      BuildingsFOREGROUNDPARALLAXTileSet_1: 1559680418
+      BuildingsFOREGROUNDPARALLAXTileSet_2: -133751515
+      BuildingsFOREGROUNDPARALLAXTileSet_3: 1449804848
+      BuildingsFOREGROUNDPARALLAXTileSet_4: 1437846002
+      BuildingsFOREGROUNDPARALLAXTileSet_5: 40580202
+      BuildingsFOREGROUNDPARALLAXTileSet_6: 637694338
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
