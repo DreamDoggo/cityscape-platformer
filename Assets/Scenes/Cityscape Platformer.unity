@@ -1884,7 +1884,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 811103839}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2653,7 +2653,7 @@ GameObject:
   - component: {fileID: 1559078261}
   - component: {fileID: 1559078262}
   - component: {fileID: 1559078264}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2696,7 +2696,9 @@ MonoBehaviour:
   DampingCoefficient: 0.97
   GroundedGraceDistance: 0.1
   JumpVelocity: 12
+  JumpDampingCoefficient: 0.3
   GroundCheck: {fileID: 811103839}
+  GroundLayer: 7
 --- !u!50 &1559078262
 Rigidbody2D:
   serializedVersion: 4
@@ -2722,7 +2724,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!212 &1559078263
 SpriteRenderer:
