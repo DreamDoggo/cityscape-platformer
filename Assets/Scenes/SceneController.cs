@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -29,13 +27,6 @@ public class SceneController : MonoBehaviour
 
     public void ExitGame() 
     {
-        if (!Application.isEditor)
-        {
-            Application.Quit();
-        }
-        else
-        {
-            EditorApplication.ExitPlaymode();
-        }
+        Application.Quit();
     }
 }

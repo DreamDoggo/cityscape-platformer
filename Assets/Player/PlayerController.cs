@@ -37,10 +37,17 @@ public class PlayerController : MonoBehaviour
     [Tooltip("How much smaller to make the player's hitbox when sliding")]
     [SerializeField] float SlideSquish = .5f;
 
+    [Tooltip("If the player doesn't run into a wall, how long should they be considered sliding for in seconds")]
     [SerializeField] float SlideDuration = 1.0f;
+
+    [Tooltip("How far away should the player check to see if they are touching a wall")]
+    [SerializeField] float WallGraceDistance = .55f;
 
     [Tooltip("Where on the player do they check to see if they are grounded")]
     [SerializeField] Transform GroundCheck;
+
+    [Tooltip("Where on the player do they check to see if they are near the ceiling")]
+    [SerializeField] Transform CeilingCheck;
 
     [Tooltip("What number layer is the ground on?")]
     [SerializeField] int GroundLayer;
@@ -53,8 +60,11 @@ public class PlayerController : MonoBehaviour
     private bool IsJumping;
     private bool IsSliding;
     private bool IsFacingLeft;
+    private bool IsTouchingWall;
+    private bool IsTouchingLeftWall;
+    private bool IsTouchingCeiling;
 
-
+    private string TagOfWallTouching;
 
     private void Awake()
     {
@@ -84,8 +94,9 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         UpdateMovement();
+        UpdateTouchingWall();
         UpdateJump();
-        //UpdateSlide();
+        UpdateSlide();
     }
 
     private void UpdateMovement() 
@@ -99,13 +110,11 @@ public class PlayerController : MonoBehaviour
         {
             movementValues += Vector2.left;
             IsFacingLeft = true;
-            Debug.Log(IsFacingLeft);
         }
         else if (Input.GetKey(MoveRightKey))
         {
             movementValues += Vector2.right;
             IsFacingLeft = false;
-            Debug.Log(IsFacingLeft);
         }
 
         movementValues.Normalize();
@@ -141,7 +150,7 @@ public class PlayerController : MonoBehaviour
         Vector2 rayDirection = Vector2.down;
 
         // If the player is close enough to the ground, give them the ability to jump. Otherwise, take it away.
-        RaycastHit2D rayHit = Physics2D.Raycast(rayOrigin, rayDirection, GroundedGraceDistance, GroundLayer);
+        RaycastHit2D rayHit = Physics2D.Raycast(rayOrigin, rayDirection, GroundedGraceDistance);
         // Debug.DrawRay(rayOrigin, rayDirection * rayHit.distance, Color.magenta);
         if (rayHit)
         {
@@ -167,6 +176,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // the player will do a shorter jump if they don't hold the jump key for long enough
     private void DampenJump() 
     {
         if (Input.GetKeyUp(JumpKey) && IsJumping && RefRigidBody.velocity.y > 0)
@@ -175,55 +185,83 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /*private void UpdateSlide() 
+    private void UpdateSlide() 
     {
         if (Input.GetKeyDown(SlideKey) && IsGrounded && !IsSliding)
         {
-            
-            //RefRigidBody.constraints = RigidbodyConstraints2D.FreezePositionY;
-            
-            //RefRigidBody.constraints = RigidbodyConstraints2D.FreezePositionY;
+            IsSliding = true;
+            RefCollider.size = new Vector2(RefCollider.size.x, RefCollider.size.y * SlideSquish);
+            RefCollider.offset = new Vector2(0, 0 - SlideSquish / 2);
 
             if (IsFacingLeft) 
             {
-                //RefRigidBody.velocity += new Vector2(Vector2.left.x * SlideForce, 0);
-                StartCoroutine(PerformSlide(Vector2.left.x));
-                
+                RefRigidBody.velocity += new Vector2(Vector2.left.x * SlideForce, 0); 
             }
             else 
             {
-                //RefRigidBody.velocity += new Vector2(Vector2.right.x * SlideForce, 0);
-                StartCoroutine (PerformSlide(Vector2.right.x));
-            }   
+                RefRigidBody.velocity += new Vector2(Vector2.right.x * SlideForce, 0);
+            }
+
+            StartCoroutine(SlideTimer());
         }
     }
 
-    private IEnumerator PerformSlide(float direction) 
+    private IEnumerator SlideTimer() 
     {
-        IsSliding = true;
-        RefCollider.size = new Vector2(RefCollider.size.x, RefCollider.size.y * SlideSquish);
-        RefCollider.offset = new Vector2(0, 0 - SlideSquish / 2);
-
-        // calculate how long the slide should last
-        float slideLength = Time.time + SlideDuration;
-        float slideStartTime = Time.time;
-
-        while (Time.time - slideStartTime < slideLength) 
-        {
-            RefRigidBody.AddForce(new Vector2(direction * SlideForce * Time.deltaTime, 0));
-        }
-
+        yield return new WaitForSeconds(SlideDuration);
         ResetColliderSize();
         IsSliding = false;
-        yield return null;
-
     }
 
     private void ResetColliderSize() 
     {
         RefCollider.size = new Vector2(RefCollider.size.x, RefCollider.size.y / SlideSquish);
         RefCollider.offset = Vector2.zero;
-    } */
+    }
+
+    // raycast directly to the left and right of the player to check if they are practically against a wall
+    private void UpdateTouchingWall() 
+    {
+        Vector2 rayOrigin = RefRigidBody.position;
+        Vector2 leftRayDirection = Vector2.left;
+        Vector2 rightRayDirection = Vector2.right;
+
+        RaycastHit2D leftRayHit = Physics2D.Raycast(rayOrigin, leftRayDirection, WallGraceDistance, GroundLayer);
+        RaycastHit2D rightRayHit = Physics2D.Raycast(rayOrigin, rightRayDirection, WallGraceDistance, GroundLayer);
+
+        // Debug.DrawRay(rayOrigin, leftRayDirection * leftRayHit.distance, Color.magenta);
+        // Debug.DrawRay(rayOrigin, rightRayDirection * rightRayHit.distance, Color.cyan);
+
+        if (leftRayHit && leftRayHit.distance <= WallGraceDistance) 
+        {
+            IsTouchingWall = true;
+            IsTouchingLeftWall = true;
+            TagOfWallTouching = leftRayHit.collider.gameObject.tag;
+
+            // Debug.Log("Touching left wall!");
+            // Debug.Log($"Against object with tag: {TagOfWallTouching}");
+        }
+        else if (rightRayHit && rightRayHit.distance <= WallGraceDistance) 
+        {
+            IsTouchingWall = true;
+            IsTouchingLeftWall = false;
+            TagOfWallTouching = rightRayHit.collider.gameObject.tag;
+            
+            // Debug.Log("Touching right wall!");
+            // Debug.Log($"Against object with tag: {TagOfWallTouching}");
+        }
+        else 
+        {
+            IsTouchingWall = false;
+            IsTouchingLeftWall = false;
+            TagOfWallTouching = null;
+        }
+    }
+
+    private void UpdateTouchingCeiling() 
+    {
+        
+    }
 
 
     /* TODO:
