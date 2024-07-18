@@ -58,8 +58,10 @@ public class PlayerController : MonoBehaviour
     [Tooltip("What is the tag of the surface that cannot be held on to")]
     [SerializeField] string GlassTag = "NoWallCling";
 
+    [Tooltip("How much horizontal velocity should be added during a wall jump")]
     [SerializeField] float WallJumpForceX = 15f;
 
+    [Tooltip("How much vertical velocity should be added during a wall jump")]
     [SerializeField] float WallJumpForceY = 10f;
 
     [Space(10)]
@@ -113,6 +115,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         DampenJump();
+        UpdateWallJump();
     }
     private void FixedUpdate()
     {
@@ -122,7 +125,7 @@ public class PlayerController : MonoBehaviour
         UpdateJump();
         UpdateSlide();
         UpdateWallCling();
-        UpdateWallJump();
+        
     }
 
     private void UpdateMovement() 
@@ -347,18 +350,18 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateWallJump() 
     {
-        if (IsClingingToWall) 
+        if (!IsGrounded && IsTouchingWall) 
         {
             Vector2 velocity = RefRigidBody.velocity;
             velocity.y = WallJumpForceY;
             velocity.x = WallJumpForceX;
 
-            if (IsFacingLeft && Input.GetKey(JumpKey)) 
+            if (IsFacingLeft && Input.GetKeyDown(JumpKey)) 
             {
                 IsWallJumping = true;
                 RefRigidBody.velocity = velocity;
             }
-            else if (!IsFacingLeft && Input.GetKey(JumpKey))
+            else if (!IsFacingLeft && Input.GetKeyDown(JumpKey))
             {
                 IsWallJumping = true;
                 velocity.x *= -1;
