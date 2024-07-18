@@ -55,6 +55,13 @@ public class PlayerController : MonoBehaviour
         "\n Use a value between 0 and 1, smaller values produce greater results")]
     [SerializeField] float WallClingFactor = .9f;
 
+    [Tooltip("What is the tag of the surface that cannot be held on to")]
+    [SerializeField] string GlassTag = "NoWallCling";
+
+    [SerializeField] float WallJumpForceX = 15f;
+
+    [SerializeField] float WallJumpForceY = 10f;
+
     [Space(10)]
     [Tooltip("Where on the player do they check to see if they are grounded")]
     [SerializeField] Transform GroundCheck;
@@ -77,6 +84,7 @@ public class PlayerController : MonoBehaviour
     private bool IsTouchingLeftWall;
     private bool IsTouchingCeiling;
     private bool IsClingingToWall;
+    private bool IsWallJumping;
 
     private string TagOfWallTouching;
     private float DefaultColliderHeight;
@@ -114,6 +122,7 @@ public class PlayerController : MonoBehaviour
         UpdateJump();
         UpdateSlide();
         UpdateWallCling();
+        UpdateWallJump();
     }
 
     private void UpdateMovement() 
@@ -325,7 +334,7 @@ public class PlayerController : MonoBehaviour
         bool fallingDownLeftWall = IsTouchingLeftWall && Input.GetKey(MoveLeftKey) && RefRigidBody.velocity.y < 0 && !IsGrounded;
         bool fallingDownRightWall = !IsTouchingLeftWall && IsTouchingWall && Input.GetKey(MoveRightKey) && RefRigidBody.velocity.y < 0 && !IsGrounded;
 
-        if (fallingDownLeftWall || fallingDownRightWall)
+        if ((fallingDownLeftWall || fallingDownRightWall) && TagOfWallTouching != GlassTag)
         {
             IsClingingToWall = true;
             RefRigidBody.velocity *= new Vector2(1, WallClingFactor);
@@ -340,13 +349,24 @@ public class PlayerController : MonoBehaviour
     {
         if (IsClingingToWall) 
         {
+            Vector2 velocity = RefRigidBody.velocity;
+            velocity.y = WallJumpForceY;
+            velocity.x = WallJumpForceX;
+
             if (IsFacingLeft && Input.GetKey(JumpKey)) 
             {
-                       
+                IsWallJumping = true;
+                RefRigidBody.velocity = velocity;
             }
             else if (!IsFacingLeft && Input.GetKey(JumpKey))
             {
-                
+                IsWallJumping = true;
+                velocity.x *= -1;
+                RefRigidBody.velocity = velocity;
+            }
+            else 
+            {
+                IsWallJumping = false; 
             }
         }
     }
