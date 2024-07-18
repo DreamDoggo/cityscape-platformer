@@ -2831,6 +2831,7 @@ MonoBehaviour:
   SlideSquish: 0.5
   SlideDuration: 1
   WallGraceDistance: 0.55
+  CeilingGraceDistance: 0.005
   GroundCheck: {fileID: 811103839}
   CeilingCheck: {fileID: 1461308812}
   GroundLayer: 7

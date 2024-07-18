@@ -43,6 +43,9 @@ public class PlayerController : MonoBehaviour
     [Tooltip("How far away should the player check to see if they are touching a wall")]
     [SerializeField] float WallGraceDistance = .55f;
 
+    [Tooltip("How close to the ceiling should the player be considered touching it")]
+    [SerializeField] float CeilingGraceDistance = .005f;
+
     [Tooltip("Where on the player do they check to see if they are grounded")]
     [SerializeField] Transform GroundCheck;
 
@@ -65,6 +68,7 @@ public class PlayerController : MonoBehaviour
     private bool IsTouchingCeiling;
 
     private string TagOfWallTouching;
+    private float DefaultColliderHeight;
 
     private void Awake()
     {
@@ -95,6 +99,7 @@ public class PlayerController : MonoBehaviour
     {
         UpdateMovement();
         UpdateTouchingWall();
+        UpdateTouchingCeiling();
         UpdateJump();
         UpdateSlide();
     }
@@ -143,6 +148,9 @@ public class PlayerController : MonoBehaviour
         Jump();
     }
 
+    /// <summary>
+    /// Shoot a ray from the bottom of the player to see if they are grounded
+    /// </summary>
     private void UpdateGrounded() 
     {
         // define the properties of the ray we will use to check if the player is grounded
@@ -156,12 +164,13 @@ public class PlayerController : MonoBehaviour
         {
             if (RefRigidBody.velocity.y <= 0 && rayHit.distance <= GroundedGraceDistance)
             {
-                if (IsGrounded == false) { Debug.Log("Jump refreshed"); }
+                // if (IsGrounded == false) { Debug.Log("Jump refreshed"); }
                 IsGrounded = true;
             }
         }
     }
 
+    // add vertical velocity to the player if they jump
     private void Jump() 
     {
         // modify the vertical velocity of the player's rigidbody
@@ -172,7 +181,7 @@ public class PlayerController : MonoBehaviour
             RefRigidBody.velocity = velocity;
             IsGrounded = false;
             IsJumping = true;
-            Debug.Log("Jump used");
+            // Debug.Log("Jump used");
         }
     }
 
@@ -185,12 +194,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // handles all updates related to the slide movement
     private void UpdateSlide() 
     {
-        if (Input.GetKeyDown(SlideKey) && IsGrounded && !IsSliding)
+        if (Input.GetKey(SlideKey) && IsGrounded && !IsSliding)
         {
             IsSliding = true;
-            RefCollider.size = new Vector2(RefCollider.size.x, RefCollider.size.y * SlideSquish);
+            DefaultColliderHeight = RefCollider.size.y;
+            RefCollider.size = new Vector2(RefCollider.size.x, DefaultColliderHeight * SlideSquish);
             RefCollider.offset = new Vector2(0, 0 - SlideSquish / 2);
 
             if (IsFacingLeft) 
@@ -204,6 +215,12 @@ public class PlayerController : MonoBehaviour
 
             StartCoroutine(SlideTimer());
         }
+        else if (IsTouchingWall && IsSliding) 
+        {
+            StopCoroutine(SlideTimer());
+            ResetColliderSize();
+            IsSliding = false;
+        }
     }
 
     private IEnumerator SlideTimer() 
@@ -215,8 +232,18 @@ public class PlayerController : MonoBehaviour
 
     private void ResetColliderSize() 
     {
-        RefCollider.size = new Vector2(RefCollider.size.x, RefCollider.size.y / SlideSquish);
-        RefCollider.offset = Vector2.zero;
+        if (IsTouchingCeiling) 
+        {
+            // repeat until space is availible to reset the collider size
+            Invoke("ResetColliderSize", .1f);
+            return;
+        }
+        else 
+        {
+            RefCollider.size = new Vector2(RefCollider.size.x, DefaultColliderHeight);
+            RefCollider.offset = Vector2.zero;
+        }
+        
     }
 
     // raycast directly to the left and right of the player to check if they are practically against a wall
@@ -258,16 +285,28 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // raycast directly upwards from the player to check if they are practically touching the ceiling
     private void UpdateTouchingCeiling() 
     {
+        Vector2 rayOrigin = CeilingCheck.position;
+        Vector2 rayDirection = Vector2.up;
         
+        RaycastHit2D ceilingRayHit = Physics2D.Raycast(rayOrigin, rayDirection, CeilingGraceDistance, GroundLayer);
+
+        if (ceilingRayHit && ceilingRayHit.distance <= CeilingGraceDistance)
+        {
+            IsTouchingCeiling = true;
+            // Debug.Log("Touching Ceiling");
+        }
+        else 
+        {
+            IsTouchingCeiling = false; 
+        }
     }
 
 
     /* TODO:
      * - Wall jump
-     * - Slide
-     * - Reset jump on all objects
      */
 
 
