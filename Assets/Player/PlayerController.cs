@@ -142,7 +142,7 @@ public class PlayerController : MonoBehaviour
 
         // If the player is close enough to the ground, give them the ability to jump. Otherwise, take it away.
         RaycastHit2D rayHit = Physics2D.Raycast(rayOrigin, rayDirection, GroundedGraceDistance, GroundLayer);
-        Debug.DrawRay(rayOrigin, rayDirection * rayHit.distance, Color.magenta);
+        // Debug.DrawRay(rayOrigin, rayDirection * rayHit.distance, Color.magenta);
         if (rayHit)
         {
             if (RefRigidBody.velocity.y <= 0 && rayHit.distance <= GroundedGraceDistance)

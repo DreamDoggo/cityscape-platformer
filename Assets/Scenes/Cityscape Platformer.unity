@@ -2766,7 +2766,7 @@ Transform:
   m_GameObject: {fileID: 1559078259}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.68, y: 4.43, z: 0}
+  m_LocalPosition: {x: 4.54, y: 4.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2797,6 +2797,7 @@ MonoBehaviour:
   JumpDampingCoefficient: 0.3
   SlideForce: 20
   SlideSquish: 0.5
+  SlideDuration: 1
   GroundCheck: {fileID: 811103839}
   GroundLayer: 7
 --- !u!50 &1559078262
