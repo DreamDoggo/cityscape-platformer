@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
+    [Space(10)]
     [SerializeField] KeyCode MoveLeftKey = KeyCode.A;
     [SerializeField] KeyCode MoveRightKey = KeyCode.D;
     [SerializeField] KeyCode JumpKey = KeyCode.Space;
@@ -23,15 +24,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float DampingCoefficient = 0.97f;
 
     [Space(10)]
-    [Tooltip("How close to the ground is the player considered grounded (don't make too small)")]
-    [SerializeField] float GroundedGraceDistance = .005f;
-
     [Tooltip("How powerful the player's jump is")]
     [SerializeField] float JumpVelocity = 12.0f;
 
     [Tooltip("How much to dampen the player's jump when they don't hold the jump button for long enough" +
         "\nUse values between 0 and 1, smaller values produce greater results")]
     [SerializeField] float JumpDampingCoefficient = 0.5f;
+    
+    [Tooltip("How close to the ground is the player considered grounded (don't make too small)")]
+    [SerializeField] float GroundedGraceDistance = .005f;
 
     [Space(10)]
     [Tooltip("How far sliding sends the player in the direction they're facing horizontally")]
@@ -42,6 +43,9 @@ public class PlayerController : MonoBehaviour
 
     [Tooltip("If the player doesn't run into a wall, how long should they be considered sliding for in seconds")]
     [SerializeField] float SlideDuration = 1.0f;
+    
+    [Tooltip("How close to the ceiling should the player be considered touching it")]
+    [SerializeField] float CeilingGraceDistance = .005f;
 
     [Space(10)]
     [Tooltip("How far away should the player check to see if they are touching a wall")]
@@ -50,9 +54,6 @@ public class PlayerController : MonoBehaviour
     [Tooltip("How slow should the player fall when against a wall?" +
         "\n Use a value between 0 and 1, smaller values produce greater results")]
     [SerializeField] float WallClingFactor = .9f;
-
-    [Tooltip("How close to the ceiling should the player be considered touching it")]
-    [SerializeField] float CeilingGraceDistance = .005f;
 
     [Space(10)]
     [Tooltip("Where on the player do they check to see if they are grounded")]
@@ -177,7 +178,11 @@ public class PlayerController : MonoBehaviour
             {
                 // if (IsGrounded == false) { Debug.Log("Jump refreshed"); }
                 IsGrounded = true;
-            }
+            } 
+        }
+        else
+        {
+            IsGrounded = false;
         }
     }
 
@@ -190,7 +195,6 @@ public class PlayerController : MonoBehaviour
             Vector2 velocity = RefRigidBody.velocity;
             velocity.y = JumpVelocity;
             RefRigidBody.velocity = velocity;
-            IsGrounded = false;
             IsJumping = true;
             // Debug.Log("Jump used");
         }
@@ -315,7 +319,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // if against a wall and moving downwards, reduce vertical momentum
+    // if against a wall, moving into the wall, and falling downwards, reduce vertical momentum
     private void UpdateWallCling()
     {
         bool fallingDownLeftWall = IsTouchingLeftWall && Input.GetKey(MoveLeftKey) && RefRigidBody.velocity.y < 0 && !IsGrounded;
@@ -330,7 +334,21 @@ public class PlayerController : MonoBehaviour
         {
             IsClingingToWall = false;
         }
+    }
 
+    private void UpdateWallJump() 
+    {
+        if (IsClingingToWall) 
+        {
+            if (IsFacingLeft && Input.GetKey(JumpKey)) 
+            {
+                       
+            }
+            else if (!IsFacingLeft && Input.GetKey(JumpKey))
+            {
+                
+            }
+        }
     }
 
 
