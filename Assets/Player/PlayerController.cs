@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] KeyCode JumpKey = KeyCode.Space;
     [SerializeField] KeyCode SlideKey = KeyCode.S;
 
+    [Space(10)]
     [Tooltip("The amount of horizontal force applied to the player when they move")]
     [SerializeField] float MoveForce = 15.0f;
 
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("How quickly the player horizontally decellerates")]
     [SerializeField] float DampingCoefficient = 0.97f;
 
+    [Space(10)]
     [Tooltip("How close to the ground is the player considered grounded (don't make too small)")]
     [SerializeField] float GroundedGraceDistance = .005f;
 
@@ -31,6 +33,7 @@ public class PlayerController : MonoBehaviour
         "\nUse values between 0 and 1, smaller values produce greater results")]
     [SerializeField] float JumpDampingCoefficient = 0.5f;
 
+    [Space(10)]
     [Tooltip("How far sliding sends the player in the direction they're facing horizontally")]
     [SerializeField] float SlideForce = 45f;
 
@@ -40,12 +43,18 @@ public class PlayerController : MonoBehaviour
     [Tooltip("If the player doesn't run into a wall, how long should they be considered sliding for in seconds")]
     [SerializeField] float SlideDuration = 1.0f;
 
+    [Space(10)]
     [Tooltip("How far away should the player check to see if they are touching a wall")]
     [SerializeField] float WallGraceDistance = .55f;
+
+    [Tooltip("How slow should the player fall when against a wall?" +
+        "\n Use a value between 0 and 1, smaller values produce greater results")]
+    [SerializeField] float WallClingFactor = .9f;
 
     [Tooltip("How close to the ceiling should the player be considered touching it")]
     [SerializeField] float CeilingGraceDistance = .005f;
 
+    [Space(10)]
     [Tooltip("Where on the player do they check to see if they are grounded")]
     [SerializeField] Transform GroundCheck;
 
@@ -66,6 +75,7 @@ public class PlayerController : MonoBehaviour
     private bool IsTouchingWall;
     private bool IsTouchingLeftWall;
     private bool IsTouchingCeiling;
+    private bool IsClingingToWall;
 
     private string TagOfWallTouching;
     private float DefaultColliderHeight;
@@ -102,6 +112,7 @@ public class PlayerController : MonoBehaviour
         UpdateTouchingCeiling();
         UpdateJump();
         UpdateSlide();
+        UpdateWallCling();
     }
 
     private void UpdateMovement() 
@@ -204,11 +215,11 @@ public class PlayerController : MonoBehaviour
             RefCollider.size = new Vector2(RefCollider.size.x, DefaultColliderHeight * SlideSquish);
             RefCollider.offset = new Vector2(0, 0 - SlideSquish / 2);
 
-            if (IsFacingLeft) 
+            if (IsFacingLeft && !IsTouchingLeftWall) 
             {
                 RefRigidBody.velocity += new Vector2(Vector2.left.x * SlideForce, 0); 
             }
-            else 
+            else if (!IsFacingLeft && IsTouchingWall && !IsTouchingLeftWall) 
             {
                 RefRigidBody.velocity += new Vector2(Vector2.right.x * SlideForce, 0);
             }
@@ -302,6 +313,24 @@ public class PlayerController : MonoBehaviour
         {
             IsTouchingCeiling = false; 
         }
+    }
+
+    // if against a wall and moving downwards, reduce vertical momentum
+    private void UpdateWallCling()
+    {
+        bool fallingDownLeftWall = IsTouchingLeftWall && Input.GetKey(MoveLeftKey) && RefRigidBody.velocity.y < 0 && !IsGrounded;
+        bool fallingDownRightWall = !IsTouchingLeftWall && IsTouchingWall && Input.GetKey(MoveRightKey) && RefRigidBody.velocity.y < 0 && !IsGrounded;
+
+        if (fallingDownLeftWall || fallingDownRightWall)
+        {
+            IsClingingToWall = true;
+            RefRigidBody.velocity *= new Vector2(1, WallClingFactor);
+        }
+        else 
+        {
+            IsClingingToWall = false;
+        }
+
     }
 
 

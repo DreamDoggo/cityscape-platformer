@@ -2820,7 +2820,7 @@ MonoBehaviour:
   MoveLeftKey: 97
   MoveRightKey: 100
   JumpKey: 32
-  SlideKey: 99
+  SlideKey: 115
   MoveForce: 15
   MaxVelocity: 6
   DampingCoefficient: 0.97
@@ -2831,6 +2831,7 @@ MonoBehaviour:
   SlideSquish: 0.5
   SlideDuration: 1
   WallGraceDistance: 0.55
+  WallClingFactor: 0.9
   CeilingGraceDistance: 0.005
   GroundCheck: {fileID: 811103839}
   CeilingCheck: {fileID: 1461308812}
