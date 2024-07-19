@@ -7,13 +7,13 @@ using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
-    [Space(10)]
+    [Header("------ Keycodes ------")]
     [SerializeField] KeyCode MoveLeftKey = KeyCode.A;
     [SerializeField] KeyCode MoveRightKey = KeyCode.D;
     [SerializeField] KeyCode JumpKey = KeyCode.Space;
     [SerializeField] KeyCode SlideKey = KeyCode.S;
 
-    [Space(10)]
+    [Header("------ Horizontal Movement ------")]
     [Tooltip("The amount of horizontal force applied to the player when they move")]
     [SerializeField] float MoveForce = 15.0f;
 
@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("How quickly the player horizontally decellerates")]
     [SerializeField] float DampingCoefficient = 0.97f;
 
-    [Space(10)]
+    [Header("------ Jumping ------")]
     [Tooltip("How powerful the player's jump is")]
     [SerializeField] float JumpVelocity = 12.0f;
 
@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("How close to the ground is the player considered grounded (don't make too small)")]
     [SerializeField] float GroundedGraceDistance = .005f;
 
-    [Space(10)]
+    [Header("------ Sliding ------")]
     [Tooltip("How far sliding sends the player in the direction they're facing horizontally")]
     [SerializeField] float SlideForce = 45f;
 
@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("How close to the ceiling should the player be considered touching it")]
     [SerializeField] float CeilingGraceDistance = .005f;
 
-    [Space(10)]
+    [Header("------ Wall Cling & Wall Jump ------")]
     [Tooltip("How far away should the player check to see if they are touching a wall")]
     [SerializeField] float WallGraceDistance = .55f;
 
@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("How much vertical velocity should be added during a wall jump")]
     [SerializeField] float WallJumpForceY = 10f;
 
-    [Space(10)]
+    [Header("------ Positional Checks ------")]
     [Tooltip("Where on the player do they check to see if they are grounded")]
     [SerializeField] Transform GroundCheck;
 
@@ -84,6 +84,7 @@ public class PlayerController : MonoBehaviour
     private bool IsFacingLeft;
     private bool IsTouchingWall;
     private bool IsTouchingLeftWall;
+    private bool IsTouchingRightWall;
     private bool IsTouchingCeiling;
     private bool IsClingingToWall;
     private bool IsWallJumping;
@@ -130,9 +131,11 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateMovement() 
     {
+        
         // use a variable to store where the player has to move
         // starts as (x=0, y=0) meaning our player has no velocity 
         Vector2 movementValues = Vector2.zero;
+
 
         // convert the user's input to movement values
         if (Input.GetKey(MoveLeftKey))
@@ -184,7 +187,7 @@ public class PlayerController : MonoBehaviour
         // If the player is close enough to the ground, give them the ability to jump. Otherwise, take it away.
         RaycastHit2D rayHit = Physics2D.Raycast(rayOrigin, rayDirection, GroundedGraceDistance);
         // Debug.DrawRay(rayOrigin, rayDirection * rayHit.distance, Color.magenta);
-        if (rayHit)
+        if (rayHit && !IsGrounded)
         {
             if (RefRigidBody.velocity.y <= 0 && rayHit.distance <= GroundedGraceDistance)
             {
@@ -227,6 +230,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(SlideKey) && IsGrounded && !IsSliding)
         {
             IsSliding = true;
+
             DefaultColliderHeight = RefCollider.size.y;
             RefCollider.size = new Vector2(RefCollider.size.x, DefaultColliderHeight * SlideSquish);
             RefCollider.offset = new Vector2(0, 0 - SlideSquish / 2);
@@ -235,7 +239,7 @@ public class PlayerController : MonoBehaviour
             {
                 RefRigidBody.velocity += new Vector2(Vector2.left.x * SlideForce, 0); 
             }
-            else if (!IsFacingLeft && IsTouchingWall && !IsTouchingLeftWall) 
+            else if (!IsFacingLeft && !IsTouchingRightWall) 
             {
                 RefRigidBody.velocity += new Vector2(Vector2.right.x * SlideForce, 0);
             }
@@ -276,7 +280,7 @@ public class PlayerController : MonoBehaviour
     // raycast directly to the left and right of the player to check if they are practically against a wall
     private void UpdateTouchingWall() 
     {
-        Vector2 rayOrigin = RefRigidBody.position;
+        Vector2 rayOrigin = new Vector2(RefRigidBody.position.x, RefRigidBody.position.y - .2f);
         Vector2 leftRayDirection = Vector2.left;
         Vector2 rightRayDirection = Vector2.right;
 
@@ -298,7 +302,7 @@ public class PlayerController : MonoBehaviour
         else if (rightRayHit && rightRayHit.distance <= WallGraceDistance) 
         {
             IsTouchingWall = true;
-            IsTouchingLeftWall = false;
+            IsTouchingRightWall = false;
             TagOfWallTouching = rightRayHit.collider.gameObject.tag;
             
             // Debug.Log("Touching right wall!");
@@ -308,6 +312,7 @@ public class PlayerController : MonoBehaviour
         {
             IsTouchingWall = false;
             IsTouchingLeftWall = false;
+            IsTouchingRightWall = false;
             TagOfWallTouching = null;
         }
     }
@@ -335,7 +340,7 @@ public class PlayerController : MonoBehaviour
     private void UpdateWallCling()
     {
         bool fallingDownLeftWall = IsTouchingLeftWall && Input.GetKey(MoveLeftKey) && RefRigidBody.velocity.y < 0 && !IsGrounded;
-        bool fallingDownRightWall = !IsTouchingLeftWall && IsTouchingWall && Input.GetKey(MoveRightKey) && RefRigidBody.velocity.y < 0 && !IsGrounded;
+        bool fallingDownRightWall = IsTouchingRightWall && IsTouchingWall && Input.GetKey(MoveRightKey) && RefRigidBody.velocity.y < 0 && !IsGrounded;
 
         if ((fallingDownLeftWall || fallingDownRightWall) && TagOfWallTouching != GlassTag)
         {
@@ -348,6 +353,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // handle operations related to the wall jump
     private void UpdateWallJump() 
     {
         if (!IsGrounded && IsTouchingWall) 
@@ -375,8 +381,9 @@ public class PlayerController : MonoBehaviour
     }
 
 
+
     /* TODO:
-     * - Wall jump
+     * - 
      */
 
 
