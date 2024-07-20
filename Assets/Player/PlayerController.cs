@@ -356,7 +356,7 @@ public class PlayerController : MonoBehaviour
     // handle operations related to the wall jump
     private void UpdateWallJump() 
     {
-        if (!IsGrounded && IsTouchingWall) 
+        if (!IsGrounded && IsTouchingWall && TagOfWallTouching != GlassTag) 
         {
             Vector2 velocity = RefRigidBody.velocity;
             velocity.y = WallJumpForceY;
