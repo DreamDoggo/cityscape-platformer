@@ -77,6 +77,7 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D RefRigidBody;
     BoxCollider2D RefCollider;
     SpriteRenderer RefSprite;
+    Animator RefAnimator;
 
     private bool IsGrounded;
     private bool IsJumping;
@@ -105,11 +106,21 @@ public class PlayerController : MonoBehaviour
         {
             Debug.LogError("A BoxColider component was not found on the player");
         }
+        else 
+        {
+            DefaultColliderHeight = RefCollider.size.y;
+        }
 
         RefSprite = GetComponent<SpriteRenderer>();
         if (RefSprite == null) 
         {
             Debug.LogError("The player doesn't have a Sprite!");
+        }
+
+        RefAnimator = GetComponent<Animator>();
+        if (RefAnimator == null) 
+        {
+            Debug.LogError("The player doesn't have an animator component!");
         }
     }
 
@@ -117,6 +128,7 @@ public class PlayerController : MonoBehaviour
     {
         DampenJump();
         UpdateWallJump();
+        UpdateAnimation();
     }
     private void FixedUpdate()
     {
@@ -142,11 +154,13 @@ public class PlayerController : MonoBehaviour
         {
             movementValues += Vector2.left;
             IsFacingLeft = true;
+            RefSprite.flipX = true;
         }
         else if (Input.GetKey(MoveRightKey))
         {
             movementValues += Vector2.right;
             IsFacingLeft = false;
+            RefSprite.flipX = false;
         }
 
         movementValues.Normalize();
@@ -186,10 +200,10 @@ public class PlayerController : MonoBehaviour
 
         // If the player is close enough to the ground, give them the ability to jump. Otherwise, take it away.
         RaycastHit2D rayHit = Physics2D.Raycast(rayOrigin, rayDirection, GroundedGraceDistance);
-        // Debug.DrawRay(rayOrigin, rayDirection * rayHit.distance, Color.magenta);
+        Debug.DrawRay(rayOrigin, rayDirection * rayHit.distance, Color.magenta);
         if (rayHit && !IsGrounded)
         {
-            if (RefRigidBody.velocity.y <= 0 && rayHit.distance <= GroundedGraceDistance)
+            if (RefRigidBody.velocity.y <= 0 && rayHit.distance <= GroundedGraceDistance && IsGrounded == false)
             {
                 // if (IsGrounded == false) { Debug.Log("Jump refreshed"); }
                 IsGrounded = true;
@@ -213,6 +227,10 @@ public class PlayerController : MonoBehaviour
             IsJumping = true;
             // Debug.Log("Jump used");
         }
+        else if (IsJumping && IsGrounded)
+        {
+            IsJumping = false;
+        }
     }
 
     // the player will do a shorter jump if they don't hold the jump key for long enough
@@ -231,7 +249,6 @@ public class PlayerController : MonoBehaviour
         {
             IsSliding = true;
 
-            DefaultColliderHeight = RefCollider.size.y;
             RefCollider.size = new Vector2(RefCollider.size.x, DefaultColliderHeight * SlideSquish);
             RefCollider.offset = new Vector2(0, 0 - SlideSquish / 2);
 
@@ -287,8 +304,8 @@ public class PlayerController : MonoBehaviour
         RaycastHit2D leftRayHit = Physics2D.Raycast(rayOrigin, leftRayDirection, WallGraceDistance, GroundLayer);
         RaycastHit2D rightRayHit = Physics2D.Raycast(rayOrigin, rightRayDirection, WallGraceDistance, GroundLayer);
 
-        // Debug.DrawRay(rayOrigin, leftRayDirection * leftRayHit.distance, Color.magenta);
-        // Debug.DrawRay(rayOrigin, rightRayDirection * rightRayHit.distance, Color.cyan);
+        Debug.DrawRay(rayOrigin, leftRayDirection * leftRayHit.distance, Color.magenta);
+        Debug.DrawRay(rayOrigin, rightRayDirection * rightRayHit.distance, Color.cyan);
 
         if (leftRayHit && leftRayHit.distance <= WallGraceDistance) 
         {
@@ -378,6 +395,13 @@ public class PlayerController : MonoBehaviour
                 IsWallJumping = false; 
             }
         }
+    }
+
+    private void UpdateAnimation() 
+    {
+        RefAnimator.SetBool("IsJumping", IsJumping);
+        RefAnimator.SetBool("IsSliding", IsSliding);
+        RefAnimator.SetBool("Grounded", IsGrounded);
     }
 
 
