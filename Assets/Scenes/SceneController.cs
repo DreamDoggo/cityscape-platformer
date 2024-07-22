@@ -86,4 +86,9 @@ public class SceneController : MonoBehaviour
         IsInMainMenu = true;
         CreditButtonText.SetText("Credits");
     }
+
+    public void EndGame() 
+    {
+        
+    }
 }
